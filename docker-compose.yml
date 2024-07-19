@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  qmk_firmware:
+    build: .
+    container_name: qmk_firmware_builder
+    volumes:
+      - .:/qmk_firmware
+    environment:
+      - KEYBOARD=${KEYBOARD}
+      - KEYMAP=${KEYMAP}
+    command: >
+      sh -c "
+      if [ -z ${KEYBOARD} ] || [ -z ${KEYMAP} ]; then
+        echo 'Error: KEYBOARD and KEYMAP environment variables must be set.';
+        exit 1;
+      else
+        qmk compile -kb ${KEYBOARD} -km ${KEYMAP};
+      fi"
+    restart: on-failure
